@@ -1,0 +1,48 @@
+import requests
+
+
+def weather_request():
+    base_url = "https://api.openweathermap.org/data/2.5/weather?"
+    zip = input("Please enter the zip code of your city: ").strip()
+    api_key = "1d9cda20aa1c3a4d6ec0914f89b76864"
+
+    url = base_url + "zip=" + zip + "&appid=" + api_key + "&units=imperial"
+    response = requests.get(url)
+
+    while response.status_code != 200:
+        zip = input("Invalid ZIP code. Please Try Again: ").strip()
+        url = base_url + "zip=" + zip + "&appid=" + api_key + "&units=imperial"
+        response = requests.get(url)
+
+    if response.status_code == 200:
+        print("Retrieving your forecast...")
+        data = response.json()
+        main = data["main"]
+        temperature = main["temp"]
+        wind_speed = data["wind"]["speed"]
+        humidity = main["humidity"]
+        report = data["weather"]
+        print(f"---------{zip}---------")
+        print(f"Temperature: {temperature}")
+        print(f"Wind Speed : {wind_speed}mph")
+        print(f"Humidity: {humidity}%")
+        print(f"Weather Report: {report[0]['description']}")
+
+
+def again():
+    while True:
+        answer = input("Would you like to receive another forecast? (y/n): ").strip().lower()
+        if answer in ("y", "yes"):
+            weather_request()
+
+        elif answer in ("n", "no"):
+            break
+
+
+print("---------------Welcome!---------------")
+
+weather_request()
+
+again()
+
+print("Thank you for trusting us to be your source of weather forecasts!")
